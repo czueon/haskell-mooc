@@ -16,6 +16,7 @@
 module Set1 where
 
 import Mooc.Todo
+import Codec.Picture.Png.Internal.Type (PngIHdr(width))
 
 ------------------------------------------------------------------------------
 -- Ex 1: define variables one and two. They should have type Int and
@@ -30,7 +31,7 @@ two = 2
 -- should take one argument and return it multiplied by two.
 
 double :: Integer -> Integer
-double x = 2*x
+double x = 2 * x
 
 ------------------------------------------------------------------------------
 -- Ex 3: define the function quadruple that uses the function double
@@ -54,7 +55,7 @@ quadruple x = double (double x)
 --   distance 0 0 1 1  ==>  1.4142135...
 --   distance 1 1 4 5  ==>  5.0
 
-distance x1 y1 x2 y2 = sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+distance x1 y1 x2 y2 = sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
 
 ------------------------------------------------------------------------------
 -- Ex 5: define the function eeny that returns "eeny" for even inputs
@@ -63,7 +64,7 @@ distance x1 y1 x2 y2 = sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 -- Ps. have a look at the built in function "even"
 
 eeny :: Integer -> String
-eeny x = if x `mod` 2 == 0
+eeny x = if even x
          then "eeny"
          else "meeny"
 
@@ -74,8 +75,8 @@ eeny x = if x `mod` 2 == 0
 
 checkPassword :: String -> String
 checkPassword password = if password == "swordfish" || password == "mellon"
-                          then "You're in."
-                          else "ACCESS DENIED!"
+                         then "You're in."
+                         else "ACCESS DENIED!"
 
 ------------------------------------------------------------------------------
 -- Ex 7: A postal service prices packages the following way.
@@ -87,7 +88,9 @@ checkPassword password = if password == "swordfish" || password == "mellon"
 -- in grams, and returns the cost in credits.
 
 postagePrice :: Int -> Int
-postagePrice = todo
+postagePrice weight = if weight <= 500 then 250
+                      else if weight > 500 && weight <= 5000 then 300 + weight
+                      else 6000
 
 ------------------------------------------------------------------------------
 -- Ex 8: define a function isZero that returns True if it is given an
@@ -97,7 +100,8 @@ postagePrice = todo
 --
 -- Ps. remember, the type of booleans in haskell is Bool
 
-isZero = todo
+isZero 0 = True
+isZero _ = False
 
 ------------------------------------------------------------------------------
 -- Ex 9: implement using recursion a function sumTo such that
@@ -105,14 +109,16 @@ isZero = todo
 -- computes the sum 1+2+...+n
 
 sumTo :: Integer -> Integer
-sumTo = todo
+sumTo 1 = 1
+sumTo n = sumTo (n-1) + n
 
 ------------------------------------------------------------------------------
 -- Ex 10: power n k should compute n to the power k (i.e. n^k)
 -- Use recursion.
 
 power :: Integer -> Integer -> Integer
-power = todo
+power n 1 = n
+power n k = n * power n (k-1)
 
 ------------------------------------------------------------------------------
 -- Ex 11: ilog3 n should be the number of times you can divide given
@@ -131,4 +137,5 @@ power = todo
 --   ilog3 7 ==> 2
 
 ilog3 :: Integer -> Integer
-ilog3 = todo
+ilog3 0 = 0
+ilog3 n = ilog3 (div n 3) + 1
