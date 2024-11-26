@@ -12,6 +12,7 @@ import Mooc.Todo
 import Data.Char
 import Data.Either
 import Data.List
+import System.CPUTime (cpuTimePrecision)
 
 ------------------------------------------------------------------------------
 -- Ex 1: implement the function maxBy that takes as argument a
@@ -56,7 +57,11 @@ mapMaybe f x = case x of
 --   mapMaybe2 div (Just 6) Nothing   ==>  Nothing
 
 mapMaybe2 :: (a -> b -> c) -> Maybe a -> Maybe b -> Maybe c
-mapMaybe2 f x y = todo
+mapMaybe2 f x y = case x of
+    Nothing -> Nothing
+    Just a -> case y of
+        Nothing -> Nothing
+        Just b -> Just (f a b)
 
 ------------------------------------------------------------------------------
 -- Ex 4: define the functions firstHalf and palindrome so that
@@ -78,9 +83,11 @@ mapMaybe2 f x y = todo
 palindromeHalfs :: [String] -> [String]
 palindromeHalfs xs = map firstHalf (filter palindrome xs)
 
-firstHalf = todo
+firstHalf :: String -> String
+firstHalf str = take ((length str + 1) `div` 2) str
 
-palindrome = todo
+palindrome :: String -> Bool
+palindrome str = str == reverse str
 
 ------------------------------------------------------------------------------
 -- Ex 5: Implement a function capitalize that takes in a string and
@@ -98,7 +105,11 @@ palindrome = todo
 --   capitalize "goodbye cruel world" ==> "Goodbye Cruel World"
 
 capitalize :: String -> String
-capitalize = todo
+capitalize str = unwords (map capitalizeFirst (words str))
+
+capitalizeFirst :: String -> String
+capitalizeFirst [] = []
+capitalizeFirst (x:xs) = toUpper x : xs
 
 ------------------------------------------------------------------------------
 -- Ex 6: powers k max should return all the powers of k that are less
@@ -115,7 +126,7 @@ capitalize = todo
 --   * the function takeWhile
 
 powers :: Int -> Int -> [Int]
-powers k max = todo
+powers k max = takeWhile (<=max) [k^x | x <- [0..max]]
 
 ------------------------------------------------------------------------------
 -- Ex 7: implement a functional while loop. While should be a function
@@ -138,7 +149,7 @@ powers k max = todo
 --     ==> Avvt
 
 while :: (a->Bool) -> (a->a) -> a -> a
-while check update value = todo
+while check update value = if check value then while check update (update value) else value
 
 ------------------------------------------------------------------------------
 -- Ex 8: another version of a while loop. This time, the check
