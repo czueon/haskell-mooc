@@ -169,7 +169,9 @@ while check update value = if check value then while check update (update value)
 -- Hint! Remember the case-of expression from lecture 2.
 
 whileRight :: (a -> Either b a) -> a -> b
-whileRight check x = todo
+whileRight check x = case check x of
+    Left y -> y
+    Right z -> whileRight check z
 
 -- for the whileRight examples:
 -- step k x doubles x if it's less than k
@@ -193,7 +195,7 @@ bomb x = Right (x-1)
 -- Hint! This is a great use for list comprehensions
 
 joinToLength :: Int -> [String] -> [String]
-joinToLength = todo
+joinToLength n str = [x ++ y | x <- str, y <- str, length (x ++ y) == n]
 
 ------------------------------------------------------------------------------
 -- Ex 10: implement the operator +|+ that returns a list with the first
@@ -207,6 +209,11 @@ joinToLength = todo
 --   [] +|+ [True]        ==> [True]
 --   [] +|+ []            ==> []
 
+(+|+) :: [a] -> [a] -> [a]
+(+|+) [] [] = []
+(+|+) [] (y:ys) = [y]
+(+|+) (x:xs) [] = [x]
+(+|+) (x:xs) (y:ys) = [x, y]
 
 ------------------------------------------------------------------------------
 -- Ex 11: remember the lectureParticipants example from Lecture 2? We
@@ -223,7 +230,9 @@ joinToLength = todo
 --   sumRights [Left "bad!", Left "missing"]         ==>  0
 
 sumRights :: [Either a Int] -> Int
-sumRights = todo
+sumRights [] = 0
+sumRights (Right n : xs) = n + sumRights xs
+sumRights (Left _ : xs) = sumRights xs
 
 ------------------------------------------------------------------------------
 -- Ex 12: recall the binary function composition operation
@@ -239,7 +248,9 @@ sumRights = todo
 --   multiCompose [(3*), (2^), (+1)] 0 ==> 6
 --   multiCompose [(+1), (2^), (3*)] 0 ==> 2
 
-multiCompose fs = todo
+multiCompose :: [a -> a] -> a -> a
+multiCompose [] x = x
+multiCompose (f:fs) x = f (multiCompose fs x)
 
 ------------------------------------------------------------------------------
 -- Ex 13: let's consider another way to compose multiple functions. Given
@@ -260,7 +271,8 @@ multiCompose fs = todo
 --   multiApp id [head, (!!2), last] "axbxc" ==> ['a','b','c'] i.e. "abc"
 --   multiApp sum [head, (!!2), last] [1,9,2,9,3] ==> 6
 
-multiApp = todo
+multiApp :: ([b] -> c) -> [a -> b] -> a -> c
+multiApp f gs x = f (map ($ x) gs)
 
 ------------------------------------------------------------------------------
 -- Ex 14: in this exercise you get to implement an interpreter for a
@@ -295,4 +307,14 @@ multiApp = todo
 -- function, the surprise won't work. See section 3.8 in the material.
 
 interpreter :: [String] -> [String]
-interpreter commands = todo
+interpreter commands = interpret commands 0 0
+  where
+    interpret [] _ _ = []
+    interpret (cmd:cmds) x y
+      | cmd == "up"      = interpret cmds x (y + 1)
+      | cmd == "down"    = interpret cmds x (y - 1)
+      | cmd == "left"    = interpret cmds (x - 1) y
+      | cmd == "right"   = interpret cmds (x + 1) y
+      | cmd == "printX"  = show x : interpret cmds x y
+      | cmd == "printY"  = show y : interpret cmds x y
+      | otherwise        = interpret cmds x y
